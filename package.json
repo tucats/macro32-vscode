@@ -1,0 +1,118 @@
+{
+  "name": "macro32-vscode",
+  "displayName": "VAX MACRO-32",
+  "description": "Syntax coloring, formatting, and snippets for VAX MACRO-32 assembly language (.MAR) files",
+  "version": "0.2.0",
+  "publisher": "tucats",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tucats/macro32-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tucats/macro32-vscode/issues"
+  },
+  "keywords": [
+    "VAX",
+    "MACRO-32",
+    "VMS",
+    "OpenVMS",
+    "assembly"
+  ],
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Formatters"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:macro32"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "macro32",
+        "aliases": [
+          "VAX MACRO-32",
+          "macro32"
+        ],
+        "extensions": [
+          ".mar",
+          ".MAR"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "macro32",
+        "scopeName": "source.macro32",
+        "path": "./syntaxes/macro32.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "macro32.format",
+        "title": "MACRO-32: Format File"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "macro32",
+        "path": "./snippets/macro32.code-snippets"
+      }
+    ],
+    "configurationDefaults": {
+      "[macro32]": {
+        "editor.insertSpaces": false,
+        "editor.tabSize": 8,
+        "editor.detectIndentation": false
+      }
+    },
+    "configuration": {
+      "title": "VAX MACRO-32",
+      "properties": {
+        "macro32.format.opcodeColumn": {
+          "type": "integer",
+          "default": 9,
+          "minimum": 2,
+          "description": "Column (counting from 1) of the opcode field."
+        },
+        "macro32.format.operandColumn": {
+          "type": "integer",
+          "default": 17,
+          "minimum": 3,
+          "description": "Column (counting from 1) of the operand field."
+        },
+        "macro32.format.commentColumn": {
+          "type": "integer",
+          "default": 41,
+          "minimum": 4,
+          "description": "Column (counting from 1) of a statement's comment."
+        },
+        "macro32.format.useTabs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Pad between fields with tabs (8-column stops) rather than spaces."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run grammar && npm run compile",
+    "grammar": "node scripts/build-grammar.js",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node test/run.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^5.0.0",
+    "vsce": "^2.15.0"
+  }
+}

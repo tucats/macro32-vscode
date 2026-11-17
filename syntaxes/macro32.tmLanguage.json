@@ -1,0 +1,861 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "VAX MACRO-32",
+  "scopeName": "source.macro32",
+  "patterns": [
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#assignment"
+    },
+    {
+      "include": "#string-directive"
+    },
+    {
+      "include": "#title-directive"
+    },
+    {
+      "include": "#macro-definition"
+    },
+    {
+      "include": "#conditional-directive"
+    },
+    {
+      "include": "#psect-directive"
+    },
+    {
+      "include": "#directive"
+    },
+    {
+      "include": "#instruction"
+    },
+    {
+      "include": "#macro-call"
+    },
+    {
+      "include": "#labels-only"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "match": "(;).*$",
+      "name": "comment.line.semicolon.macro32",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.comment.macro32"
+        }
+      }
+    },
+    "label": {
+      "patterns": [
+        {
+          "match": "([0-9]+\\$)(::?)",
+          "captures": {
+            "1": {
+              "name": "entity.name.label.local.macro32"
+            },
+            "2": {
+              "name": "punctuation.separator.label.macro32"
+            }
+          }
+        },
+        {
+          "match": "([A-Za-z0-9$._']+)(::?)",
+          "captures": {
+            "1": {
+              "name": "entity.name.label.macro32"
+            },
+            "2": {
+              "name": "punctuation.separator.label.macro32"
+            }
+          }
+        }
+      ]
+    },
+    "labels-only": {
+      "match": "^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)+)",
+      "captures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        }
+      }
+    },
+    "assignment": {
+      "begin": "^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)([A-Za-z0-9$._']+)[ \\t]*(==?:?)",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "name": "variable.other.constant.macro32"
+        },
+        "3": {
+          "name": "keyword.operator.assignment.macro32"
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.assignment.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#ascii-operator"
+        },
+        {
+          "include": "#delimited-argument"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#registers"
+        },
+        {
+          "include": "#mode-prefix"
+        },
+        {
+          "include": "#radix-numbers"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#local-labels"
+        },
+        {
+          "include": "#string-operators"
+        },
+        {
+          "include": "#symbols"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "string-directive": {
+      "begin": "(?i)^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)(\\.(?:ASCI[ICZD]|IDENT))(?=[ \\t]|;|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "name": "storage.type.string.macro32"
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.directive.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "begin": "([^\\s<;=])",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.begin.macro32"
+            }
+          },
+          "end": "(\\1)|$",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.macro32"
+            }
+          },
+          "name": "string.quoted.other.macro32"
+        }
+      ]
+    },
+    "title-directive": {
+      "begin": "(?i)^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)(?:(\\.TITLE)(?:[ \\t]+([^ \\t;]+))?|(\\.(?:SUBTITLE|SBTTL)))(?=[ \\t]|;|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.other.directive.macro32"
+        },
+        "3": {
+          "name": "entity.name.section.macro32"
+        },
+        "4": {
+          "name": "keyword.other.directive.macro32"
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.directive.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "match": "[^;]+",
+          "name": "string.unquoted.title.macro32"
+        }
+      ]
+    },
+    "macro-definition": {
+      "begin": "(?i)^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)(\\.MACRO)(?:[ \\t]+([A-Za-z0-9$._']+))?(?=[ \\t]|;|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.control.macro.macro32"
+        },
+        "3": {
+          "name": "entity.name.function.macro.macro32"
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.macro-definition.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "match": "=",
+          "name": "keyword.operator.assignment.macro32"
+        },
+        {
+          "match": "(\\?)?([A-Za-z$_][A-Za-z0-9$._]*)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.created-label.macro32"
+            },
+            "2": {
+              "name": "variable.parameter.macro32"
+            }
+          }
+        },
+        {
+          "include": "#ascii-operator"
+        },
+        {
+          "include": "#delimited-argument"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#registers"
+        },
+        {
+          "include": "#mode-prefix"
+        },
+        {
+          "include": "#radix-numbers"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#local-labels"
+        },
+        {
+          "include": "#string-operators"
+        },
+        {
+          "include": "#symbols"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "conditional-directive": {
+      "begin": "(?i)^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)(\\.IIF|\\.IF)(?=[ \\t]|;|$)(?:[ \\t]+(EQ|NE|GT|LE|LT|GE|DF|NDF|B|NB|IDN|DIF|EQUAL|NOT_EQUAL|GREATER|LESS_EQUAL|LESS_THAN|GREATER_EQUAL|DEFINED|NOT_DEFINED|BLANK|NOT_BLANK|IDENTICAL|DIFFERENT|ZERO|NOT_ZERO)\\b)?",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.control.conditional.macro32"
+        },
+        "3": {
+          "name": "keyword.operator.condition.macro32"
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.directive.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "match": "(?<=,)[ \\t]*(\\.[A-Za-z_$][A-Za-z0-9_$]*)",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#directive-name"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "include": "#ascii-operator"
+        },
+        {
+          "include": "#delimited-argument"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#registers"
+        },
+        {
+          "include": "#mode-prefix"
+        },
+        {
+          "include": "#radix-numbers"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#local-labels"
+        },
+        {
+          "include": "#string-operators"
+        },
+        {
+          "include": "#symbols"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "psect-directive": {
+      "begin": "(?i)^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)(\\.PSECT)(?=[ \\t]|;|$)(?:[ \\t]+([A-Za-z0-9$._']+))?",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.other.directive.macro32"
+        },
+        "3": {
+          "name": "entity.name.section.psect.macro32"
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.directive.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "match": "(?i)(?<![A-Za-z0-9$._])(?:NO)?(?:PIC|SHR|EXE|RD|WRT|VEC|LIB)(?![A-Za-z0-9$._])|(?<![A-Za-z0-9$._])(?:CON|OVR|REL|ABS|LCL|GBL|BYTE|WORD|LONG|QUAD|OCTA|PAGE)(?![A-Za-z0-9$._])",
+          "name": "constant.language.psect-attribute.macro32"
+        },
+        {
+          "include": "#ascii-operator"
+        },
+        {
+          "include": "#delimited-argument"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#registers"
+        },
+        {
+          "include": "#mode-prefix"
+        },
+        {
+          "include": "#radix-numbers"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#local-labels"
+        },
+        {
+          "include": "#string-operators"
+        },
+        {
+          "include": "#symbols"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "directive": {
+      "begin": "^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)(\\.[A-Za-z_$][A-Za-z0-9_$]*)(?=[ \\t]|;|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#directive-name"
+            }
+          ]
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.directive.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#ascii-operator"
+        },
+        {
+          "include": "#delimited-argument"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#registers"
+        },
+        {
+          "include": "#mode-prefix"
+        },
+        {
+          "include": "#radix-numbers"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#local-labels"
+        },
+        {
+          "include": "#string-operators"
+        },
+        {
+          "include": "#symbols"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "directive-name": {
+      "patterns": [
+        {
+          "match": "(?i)\\.(?:ADDRESS|BLK[ABDFGHLOQW]|BYTE|D_FLOATING|DOUBLE|F_FLOATING|FLOAT|G_FLOATING|H_FLOATING|LONG|MASK|OCTA|PACKED|QUAD|REF[1248]|REF16|SIGNED_BYTE|SIGNED_WORD|WORD)(?![A-Za-z0-9$_])",
+          "name": "storage.type.macro32"
+        },
+        {
+          "match": "(?i)\\.(?:ENDM|ENDR|MEXIT|MDELETE|MCALL|IRP|IRPC|REPEAT|REPT|IFF|IFT|IFTF|IF_FALSE|IF_TRUE|IF_TRUE_FALSE|ENDC|END)(?![A-Za-z0-9$_])",
+          "name": "keyword.control.macro32"
+        },
+        {
+          "match": ".+",
+          "name": "keyword.other.directive.macro32"
+        }
+      ]
+    },
+    "instruction": {
+      "begin": "(?i)^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)(AOBLEQ|AOBLSS|BICPSW|BISPSW|CVTRDL|CVTRFL|CVTRGL|CVTRHL|EDITPC|INSQHI|INSQTI|INSQUE|LDPCTX|MATCHC|MOVPSL|MOVTUC|MOVZBL|MOVZBW|MOVZWL|PROBER|PROBEW|PUSHAB|PUSHAD|PUSHAF|PUSHAG|PUSHAH|PUSHAL|PUSHAO|PUSHAQ|PUSHAW|REMQHI|REMQTI|REMQUE|SOBGEQ|SOBGTR|SVPCTX|ADAWI|ADDB2|ADDB3|ADDD2|ADDD3|ADDF2|ADDF3|ADDG2|ADDG3|ADDH2|ADDH3|ADDL2|ADDL3|ADDP4|ADDP6|ADDW2|ADDW3|BBCCI|BBSSI|BEQLU|BGEQU|BGTRU|BICB2|BICB3|BICL2|BICL3|BICW2|BICW3|BISB2|BISB3|BISL2|BISL3|BISW2|BISW3|BLEQU|BLSSU|BNEQU|CALLG|CALLS|CASEB|CASEL|CASEW|CMPC3|CMPC5|CMPP3|CMPP4|CMPZV|CVTBD|CVTBF|CVTBG|CVTBH|CVTBL|CVTBW|CVTDB|CVTDF|CVTDH|CVTDL|CVTDW|CVTFB|CVTFD|CVTFG|CVTFH|CVTFL|CVTFW|CVTGB|CVTGF|CVTGH|CVTGL|CVTGW|CVTHB|CVTHD|CVTHF|CVTHG|CVTHL|CVTHW|CVTLB|CVTLD|CVTLF|CVTLG|CVTLH|CVTLP|CVTLW|CVTPL|CVTPS|CVTPT|CVTSP|CVTTP|CVTWB|CVTWD|CVTWF|CVTWG|CVTWH|CVTWL|DIVB2|DIVB3|DIVD2|DIVD3|DIVF2|DIVF3|DIVG2|DIVG3|DIVH2|DIVH3|DIVL2|DIVL3|DIVW2|DIVW3|EMODD|EMODF|EMODG|EMODH|EXTZV|INDEX|MCOMB|MCOML|MCOMW|MNEGB|MNEGD|MNEGF|MNEGG|MNEGH|MNEGL|MNEGW|MOVAB|MOVAD|MOVAF|MOVAG|MOVAH|MOVAL|MOVAO|MOVAQ|MOVAW|MOVC3|MOVC5|MOVTC|MULB2|MULB3|MULD2|MULD3|MULF2|MULF3|MULG2|MULG3|MULH2|MULH3|MULL2|MULL3|MULW2|MULW3|POLYD|POLYF|POLYG|POLYH|PUSHL|PUSHR|SCANC|SPANC|SUBB2|SUBB3|SUBD2|SUBD3|SUBF2|SUBF3|SUBG2|SUBG3|SUBH2|SUBH3|SUBL2|SUBL3|SUBP4|SUBP6|SUBW2|SUBW3|XORB2|XORB3|XORL2|XORL3|XORW2|XORW3|ACBB|ACBD|ACBF|ACBG|ACBH|ACBL|ACBW|ADWC|ASHL|ASHP|ASHQ|BBCC|BBCS|BBSC|BBSS|BEQL|BGEQ|BGTR|BITB|BITL|BITW|BLBC|BLBS|BLEQ|BLSS|BNEQ|BSBB|BSBW|BUGL|BUGW|CHME|CHMK|CHMS|CHMU|CLRB|CLRD|CLRF|CLRG|CLRH|CLRL|CLRO|CLRQ|CLRW|CMPB|CMPD|CMPF|CMPG|CMPH|CMPL|CMPV|CMPW|DECB|DECL|DECW|DIVP|EDIV|EMUL|EXTV|HALT|INCB|INCL|INCW|INSV|LOCC|MFPR|MOVB|MOVD|MOVF|MOVG|MOVH|MOVL|MOVO|MOVP|MOVQ|MOVW|MTPR|MULP|POPR|ROTL|SBWC|SKPC|TSTB|TSTD|TSTF|TSTG|TSTH|TSTL|TSTW|BBC|BBS|BCC|BCS|BPT|BRB|BRW|BVC|BVS|CRC|FFC|FFS|JBR|JMP|JSB|NOP|REI|RET|RSB|XFC)(?=[ \\t]|;|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#instruction-name"
+            }
+          ]
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.instruction.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#ascii-operator"
+        },
+        {
+          "include": "#delimited-argument"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#registers"
+        },
+        {
+          "include": "#mode-prefix"
+        },
+        {
+          "include": "#radix-numbers"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#local-labels"
+        },
+        {
+          "include": "#string-operators"
+        },
+        {
+          "include": "#symbols"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "instruction-name": {
+      "patterns": [
+        {
+          "match": "(?i)(?<![A-Za-z0-9$_])(?:B(?!I[CST])[A-Z0-9]+|J[A-Z]+|ACB[A-Z]|AOB[A-Z]+|SOB[A-Z]+|CALL[GS]|CASE[BWL]|RET|RSB|REI|CHM[EKSU]|HALT|BPT|XFC)(?![A-Za-z0-9$_])",
+          "name": "keyword.control.flow.instruction.macro32"
+        },
+        {
+          "match": ".+",
+          "name": "keyword.other.instruction.macro32"
+        }
+      ]
+    },
+    "macro-call": {
+      "begin": "^[ \\t]*((?:[A-Za-z0-9$._']+::?[ \\t]*)*)([A-Za-z$_][A-Za-z0-9$._']*)(?=[ \\t]|;|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.labels.macro32",
+          "patterns": [
+            {
+              "include": "#label"
+            }
+          ]
+        },
+        "2": {
+          "name": "support.function.macro.macro32"
+        }
+      },
+      "end": "$",
+      "name": "meta.statement.macro-call.macro32",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "match": "(?<![A-Za-z0-9$._'])([A-Za-z$_][A-Za-z0-9$._]*)[ \\t]*(=)",
+          "captures": {
+            "1": {
+              "name": "variable.parameter.keyword.macro32"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.macro32"
+            }
+          }
+        },
+        {
+          "include": "#ascii-operator"
+        },
+        {
+          "include": "#delimited-argument"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#registers"
+        },
+        {
+          "include": "#mode-prefix"
+        },
+        {
+          "include": "#radix-numbers"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#local-labels"
+        },
+        {
+          "include": "#string-operators"
+        },
+        {
+          "include": "#symbols"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "continuation": {
+      "begin": "(-)(?=[ \\t]*(?:;.*)?$)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.separator.continuation.macro32"
+        }
+      },
+      "end": "^",
+      "patterns": [
+        {
+          "include": "#comment"
+        }
+      ]
+    },
+    "ascii-operator": {
+      "match": "(?i)(\\^A)([^\\s;])(.*?)(\\2)",
+      "captures": {
+        "1": {
+          "name": "keyword.operator.radix.macro32"
+        },
+        "2": {
+          "name": "punctuation.definition.string.begin.macro32"
+        },
+        "3": {
+          "name": "string.quoted.other.macro32"
+        },
+        "4": {
+          "name": "punctuation.definition.string.end.macro32"
+        }
+      }
+    },
+    "delimited-argument": {
+      "match": "(?<=^|[ \\t,])(\\^)([^\\sA-Za-z0-9<;$._])(.*?)(\\2)",
+      "captures": {
+        "1": {
+          "name": "keyword.operator.macro32"
+        },
+        "2": {
+          "name": "punctuation.definition.string.begin.macro32"
+        },
+        "3": {
+          "name": "string.unquoted.argument.macro32"
+        },
+        "4": {
+          "name": "punctuation.definition.string.end.macro32"
+        }
+      }
+    },
+    "angle-brackets": {
+      "begin": "<",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.angle.begin.macro32"
+        }
+      },
+      "end": "(>)|(?=$)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.section.angle.end.macro32"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#ascii-operator"
+        },
+        {
+          "include": "#delimited-argument"
+        },
+        {
+          "include": "#angle-brackets"
+        },
+        {
+          "include": "#registers"
+        },
+        {
+          "include": "#mode-prefix"
+        },
+        {
+          "include": "#radix-numbers"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#local-labels"
+        },
+        {
+          "include": "#string-operators"
+        },
+        {
+          "include": "#symbols"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "registers": {
+      "match": "(?i)(?<![A-Za-z0-9$._'])(?:R1[01]|R[0-9]|AP|FP|SP|PC)(?![A-Za-z0-9$._'])",
+      "name": "variable.language.register.macro32"
+    },
+    "mode-prefix": {
+      "match": "(?i)(?<![A-Za-z0-9$._'])[BWLGIS]\\^",
+      "name": "storage.modifier.addressing.macro32"
+    },
+    "radix-numbers": {
+      "patterns": [
+        {
+          "match": "(?i)\\^X[0-9A-F]+",
+          "name": "constant.numeric.hex.macro32"
+        },
+        {
+          "match": "(?i)\\^O[0-7]+",
+          "name": "constant.numeric.octal.macro32"
+        },
+        {
+          "match": "(?i)\\^B[01]+",
+          "name": "constant.numeric.binary.macro32"
+        },
+        {
+          "match": "(?i)\\^D[0-9]+",
+          "name": "constant.numeric.decimal.macro32"
+        },
+        {
+          "match": "(?i)\\^F[0-9]*\\.?[0-9]*(?:E[+-]?[0-9]+)?",
+          "name": "constant.numeric.float.macro32"
+        },
+        {
+          "match": "(?i)\\^[MC]",
+          "name": "keyword.operator.radix.macro32"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "match": "(?i)(?<![A-Za-z0-9$._'])[0-9]+\\.[0-9]*(?:E[+-]?[0-9]+)?(?![A-Za-z0-9$_'])",
+          "name": "constant.numeric.float.macro32"
+        },
+        {
+          "match": "(?<![A-Za-z0-9$._'])[0-9]+(?![A-Za-z0-9$._'])",
+          "name": "constant.numeric.integer.macro32"
+        }
+      ]
+    },
+    "local-labels": {
+      "match": "(?<![A-Za-z0-9$._'])[0-9]+\\$(?![A-Za-z0-9$._])",
+      "name": "entity.name.label.local.macro32"
+    },
+    "string-operators": {
+      "match": "(?i)%(?:LENGTH|LOCATE|EXTRACT)\\b",
+      "name": "support.function.string.macro32"
+    },
+    "symbols": {
+      "match": "[A-Za-z$._][A-Za-z0-9$._]*",
+      "name": "variable.other.symbol.macro32"
+    },
+    "operators": {
+      "patterns": [
+        {
+          "match": "[#@]",
+          "name": "keyword.operator.addressing.macro32"
+        },
+        {
+          "match": "'",
+          "name": "keyword.operator.concatenation.macro32"
+        },
+        {
+          "match": "[?\\\\]",
+          "name": "keyword.operator.macro.macro32"
+        },
+        {
+          "match": "[-+*/&!]",
+          "name": "keyword.operator.arithmetic.macro32"
+        },
+        {
+          "match": "[()]",
+          "name": "punctuation.section.parens.macro32"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.macro32"
+        }
+      ]
+    }
+  }
+}

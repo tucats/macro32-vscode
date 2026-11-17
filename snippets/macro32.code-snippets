@@ -1,0 +1,105 @@
+{
+  "Module": {
+    "prefix": "module",
+    "body": [
+      "\t.TITLE\t${1:NAME}\t${2:Description}",
+      "\t.IDENT\t/${3:V1.0}/",
+      "",
+      "\t.PSECT\t\\$DATA,NOEXE,WRT,LONG",
+      "$0",
+      "",
+      "\t.PSECT\t\\$CODE,EXE,NOWRT,LONG",
+      "\t.ENTRY\t${4:START},^M<>",
+      "",
+      "\tMOVL\t#SS\\$_NORMAL,R0",
+      "\tRET",
+      "",
+      "\t.END\t${4:START}"
+    ],
+    "description": "A main program module: .TITLE, .IDENT, data and code psects, an entry point, and .END"
+  },
+  "Entry point": {
+    "prefix": "entry",
+    "body": [
+      "\t.ENTRY\t${1:NAME},^M<${2:R2}>",
+      "\t$0",
+      "\tRET"
+    ],
+    "description": "A CALLS/CALLG procedure: .ENTRY with its register save mask, and RET"
+  },
+  "JSB routine": {
+    "prefix": "jsbroutine",
+    "body": [
+      "${1:NAME}:",
+      "\tPUSHR\t#^M<${2:R2,R3}>",
+      "\t$0",
+      "\tPOPR\t#^M<${2:R2,R3}>",
+      "\tRSB"
+    ],
+    "description": "A JSB routine that saves and restores registers"
+  },
+  "Program section": {
+    "prefix": "psect",
+    "body": [
+      "\t.PSECT\t${1:\\$CODE},${2|EXE\\,NOWRT,NOEXE\\,WRT,NOEXE\\,NOWRT|},${3|LONG,QUAD,PAGE,BYTE,WORD|}"
+    ],
+    "description": "A .PSECT directive"
+  },
+  "Macro definition": {
+    "prefix": "macro",
+    "body": [
+      "\t.MACRO\t${1:NAME}\t${2:ARG1,ARG2}",
+      "\t$0",
+      "\t.ENDM\t${1:NAME}"
+    ],
+    "description": "A .MACRO definition"
+  },
+  "Conditional assembly": {
+    "prefix": "if",
+    "body": [
+      "\t.IF\t${1|DF,NDF,EQ,NE,GT,LT,GE,LE,B,NB,IDN,DIF|},${2:expression}",
+      "\t$0",
+      "\t.ENDC"
+    ],
+    "description": "An .IF block"
+  },
+  "Repeat block": {
+    "prefix": "irp",
+    "body": [
+      "\t.IRP\t${1:X},<${2:A,B,C}>",
+      "\t$0",
+      "\t.ENDR"
+    ],
+    "description": "An .IRP block, repeated for each argument"
+  },
+  "String descriptor": {
+    "prefix": "ascid",
+    "body": [
+      "${1:LABEL}:\t.ASCID\t/${2:text}/"
+    ],
+    "description": "A string with a descriptor (.ASCID)"
+  },
+  "Counted string": {
+    "prefix": "ascic",
+    "body": [
+      "${1:LABEL}:\t.ASCIC\t/${2:text}/"
+    ],
+    "description": "A counted string (.ASCIC)"
+  },
+  "Exit": {
+    "prefix": "exit",
+    "body": [
+      "\t\\$EXIT_S\tCODE=${1:#SS\\$_NORMAL}"
+    ],
+    "description": "Call \\$EXIT"
+  },
+  "Check status": {
+    "prefix": "chkstatus",
+    "body": [
+      "\tBLBS\tR0,${1:10\\$}",
+      "\t\\$EXIT_S\tR0",
+      "${1:10\\$}:"
+    ],
+    "description": "Exit with R0's status if it's an error"
+  }
+}

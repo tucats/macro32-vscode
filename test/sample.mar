@@ -1,0 +1,26 @@
+	.TITLE	SAMPLE	A sample; with text
+	.IDENT	/V1.0/
+	.PSECT	$CODE,PIC,SHR,NOWRT,EXE,LONG
+FOO = 5
+GLOB == ^X1F
+	.=.+4
+	.MACRO	CALLIT	NAME,ARG=1,?LBL
+	CALLG	(AP),G^SYS$'NAME
+PREFIX'_'NAME:	.LONG	ARG
+	.ENDM	CALLIT
+MSG:	.ASCID	"Don't panic; it's fine"<13><10>
+TXT:	.ASCII	/a;b/ ; comment
+START::	.ENTRY	MAIN,^M<R2,R3,R10,R11>
+10$:	movl	#1,r0			; lower case
+	MOVAB	B^4(R10),-(SP)
+	BRB	10$
+	$FAB	FNM=<SYS$INPUT;>,-	; continued
+		FAC=GET
+	.IIF	DF, FOO, .WORD ^A/xy/
+	.IF	NOT_EQUAL, FOO-5
+	CMPL	R11,S^#3
+	.ENDC
+	DEFWORD	<;>,^%>r%
+	.LONG	10., 1.5E3, ^F2.5, ^C<3!4>
+	RET
+	.END	START
